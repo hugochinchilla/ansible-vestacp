@@ -1,0 +1,25 @@
+---
+- hosts: vesta_install
+  remote_user: root
+  tasks:
+    - name: install etckeeper
+      apt: name=etckeeper update_cache=yes
+    - name: configure etckeeper
+      template: src=confs/etckeeper.conf dest=/etc/etckeeper/etckeeper.conf owner=root group=root mode=0644
+    - name: initialize etckeeper
+      shell: etckeeper init
+    - name: disable exim4 ipv6
+      lineinfile: dest=/etc/exim4/exim4.conf.template
+                  regexp=^disable_ipv6
+                  line=disable_ipv6=true
+      notify:
+        - restart exim
+    - name: disable acl_smtp_connect (drops connections from dynamic ips)
+      lineinfile: dest=/etc/exim4/exim4.conf.template
+                  regexp=^acl_smtp_connect
+                  "line=#acl_smtp_connect = acl_check_spammers"
+
+  handlers:
+    - name: restart exim
+      service: name=exim4 state=restarted
+

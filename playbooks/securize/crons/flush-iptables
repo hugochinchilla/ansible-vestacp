@@ -1,0 +1,1 @@
+#*/5 * * * * root sh /root/flush-iptables.sh

@@ -1,0 +1,4 @@
+00 1 * * *     root   [ -x /usr/bin/freshclam ] && /usr/bin/freshclam
+00 2 * * *     root   [ -x /root/clamscan.sh ] && /root/clamscan.sh
+* * * * *    root   /usr/bin/find /home -type f -name "*.php" -mmin -2 | /usr/bin/ts >> /var/log/php-changed-files
+* * * * *    root   /usr/bin/find /home -type f -name "*.php" -cmin -2 | /usr/bin/ts >> /var/log/php-created-files

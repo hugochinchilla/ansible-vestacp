@@ -1,0 +1,22 @@
+---
+- hosts: vesta_install
+  remote_user: root
+  vars:
+    email: "example@example.org"
+    password: secret
+  tasks:
+    - name: download vesta CP installer
+      get_url: url=http://vestacp.com/pub/vst-install.sh dest=/tmp/vst-install.sh mode=0400
+    - name: fix /etc/issue if missing
+      shell: "test ! -s /etc/issue && lsb_release -d | cut -f2 > /etc/issue"
+    - name: run the installer
+      shell: >
+          yes | 1bash /tmp/vst-install.sh --nginx yes --apache yes --phpfpm no
+          --vsftpd yes --proftpd no --exim yes --dovecot yes --spamassassin yes
+          --clamav yes --named yes --iptables yes --fail2ban yes --mysql yes
+          --postgresql no --remi no --quota yes
+          --hostname {{ inventory_hostname }}
+          --email {{ email }}
+          --password {{ password }}
+      args:
+        creates: /root/.vestainstalled
